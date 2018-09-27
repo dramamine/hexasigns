@@ -3,13 +3,13 @@ const {setColor, hexToRgb, getGradients, blackout} = require('./utils')
 const {hslToRgb} = require('./color-conversion')
 
 const activateFirstLights = () => {
-  config.groups.one.forEach(fixture => {
+  config.groups.all.forEach(fixture => {
     setColor(fixture, 0, [200, 200, 200])
   });
 }
 
 const activateLastLights = () => {
-  config.groups.one.forEach(fixture => {
+  config.groups.all.forEach(fixture => {
     setColor(fixture, 27, [200, 200, 200])
   });
 }
@@ -23,7 +23,7 @@ const prettify = (ticks) => {
     28
   )
 
-  config.groups.one.forEach(fixture => {
+  config.groups.all.forEach(fixture => {
     setColor(fixture, 0, gradient)
   });
 }
@@ -35,20 +35,20 @@ let ticks = 0
 const main = () => {
   ticks = ticks + 1
 
-  prettify(ticks)
+  // prettify(ticks)
 
-  // if (ticks > 240) {
-  //   prettify(ticks)
-  // }
+  if (ticks > 240) {
+    return prettify(ticks)
+  }
 
-  // if (ticks % 24 !== 0) return
-  // if (Math.floor(ticks/24) % 2 == 0) {
-  //   blackout()
-  // } else if (Math.floor(ticks/24) % 4 == 1) {
-  //   activateFirstLights()
-  // } else if (Math.floor(ticks/24) % 4 == 3) {
-  //   activateLastLights()
-  // }
+  if (ticks % 24 !== 0) return
+  if (Math.floor(ticks/24) % 2 == 0) {
+    blackout(config)
+  } else if (Math.floor(ticks/24) % 4 == 1) {
+    activateFirstLights()
+  } else if (Math.floor(ticks/24) % 4 == 3) {
+    activateLastLights()
+  }
 }
 
 

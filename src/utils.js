@@ -54,7 +54,7 @@ const getGradients = (colorA, colorB, len) => {
 }
 
 // blackout - useful for killing process
-const blackout = (config, callback) => {
+const blackout = (config, callback = () => {}) => {
   config.groups.one.forEach(fixture => {
     artnet.set(fixture.universe, 1, Array(50*3).fill(0), (err, res) => {
       callback(res)

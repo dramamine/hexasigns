@@ -22,11 +22,11 @@ const config = {
   groups: {
     all: [
       triangles.TRIANGLE_1,
-      triangles.TRIANGLE_2,
-      triangles.TRIANGLE_3,
-      triangles.TRIANGLE_4,
-      triangles.TRIANGLE_5,
-      triangles.TRIANGLE_6
+      triangles.TRIANGLE_2
+      // triangles.TRIANGLE_3,
+      // triangles.TRIANGLE_4,
+      // triangles.TRIANGLE_5,
+      // triangles.TRIANGLE_6
     ],
     evens: [
       triangles.TRIANGLE_2,
