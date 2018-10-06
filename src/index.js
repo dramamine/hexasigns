@@ -1,6 +1,7 @@
 const config = require('./config')
 const {setColor, hexToRgb, getGradients, blackout} = require('./utils')
 const {hslToRgb} = require('./color-conversion')
+const {basicTriangle} = require('./triangle-patterns');
 
 const activateFirstLights = () => {
   config.groups.all.forEach(fixture => {
@@ -32,7 +33,7 @@ const prettify = (ticks) => {
 
 
 let ticks = 0
-const main = () => {
+const first_and_last_then_pretty = () => {
   ticks = ticks + 1
 
   // prettify(ticks)
@@ -51,9 +52,16 @@ const main = () => {
   }
 }
 
+const triangle_patterns = () => {
+  ticks = ticks + 1
+  config.groups.all.forEach(fixture => {
+    basicTriangle(fixture, ticks)
+  });
+}
+
 
 const start = Date.now()
-const loop = setInterval(main, 41)
+const loop = setInterval(triangle_patterns, 41)
 
 process.on('SIGINT', () => {
   console.log('Do something useful here.')

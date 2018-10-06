@@ -13,6 +13,80 @@ const setColor = (fixture, pos, ...colors) => {
   artnet.set(fixture.universe, startPos, flatten(colors))
 }
 
+let queuedColors = {}
+let colorQueueTimeout
+// queue up some color changes
+// @TODO: swap this out for setColor and hope it Just Works
+const setColorQueue = (fixture, pos, ...colors) => {
+
+  if (!queuedColors[fixture]) {
+    queuedColors[fixture] = new Array(510)
+  }
+
+  // find the correct channel
+  const startPos = fixture.min_channel + 3 * pos
+
+  // replace colors in our color array. overwrites things (hopefully just nulls)
+  const colorsArr = flatten(colors)
+  for (let i = 0; i < colorsArr; i++) {
+    queuedColors[fixture][startPos+i] = colorsArr[i]
+  }
+
+  // set our timeout the first time through the loop
+  if (!colorQueueTimeout) {
+    setTimeout(setColorTimeout, 0)
+  }
+
+  // artnet.set(fixture.universe, startPos, flatten(colors))
+}
+
+setColorTimeout = () => {
+  for (let [fixture, colorArr] of queuedColors) {
+    artnet.set(fixture, 0, colorArr)
+  }
+  // cleanup
+  queuedColors = {}
+  colorQueueTimeout = null
+}
+
+/**
+ *
+ *
+ *
+ *             6
+ *            7 5
+ *         17  8 4
+ *       18 16  9 3
+ *     24 19 15 10 2
+ *   25 23 20 14 11 1
+ * 27 26 22 21 13 12 0
+ *
+ * Get LED positions by row
+ */
+const byrow = [
+  [27, 26, 22, 21, 13, 12, 0],
+  [25,23,20,14,11,1],
+  [24,19,15,10,2],
+  [18,16,9,3],
+  [17, 8, 4],
+  [7, 5],
+  [6]
+];
+
+const getByRow = (row) => {
+  return byrow[row] || []
+}
+
+
+const byradius = [
+  [0,1,2,3,4,5,6,7,17,18,24,25,27,26,22,21,13,12],
+  [11,10,9,8,16,19,23,20,14],
+  [15]
+]
+const getByRadius = (row) => {
+  return byradius || []
+}
+
 // https://stackoverflow.com/questions/5623838/rgb-to-hex-and-hex-to-rgb
 const hexToRgb = (hex) => {
     // Expand shorthand form (e.g. "03F") to full form (e.g. "0033FF")
@@ -27,6 +101,15 @@ const hexToRgb = (hex) => {
       parseInt(result[2], 16),
       parseInt(result[3], 16)
     ] : null;
+}
+
+const spread = (start, end, len) => {
+  diff = end - start
+  const result = []
+  for (let i=0; i<len; i++) {
+    result.push(start + (diff * i/len))
+  }
+  return result
 }
 
 // scale from one color to the next
@@ -68,5 +151,8 @@ module.exports = {
   flatten,
   hexToRgb,
   getGradients,
-  blackout
+  blackout,
+  getByRadius,
+  getByRow,
+  spread
 }
