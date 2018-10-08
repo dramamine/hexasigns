@@ -20,12 +20,27 @@ const basicTriangle = (fixture, tick) => {
   });
 }
 
-const zoomTriangle = (fixture, tick) => {
-  const HUE_SPEED = 0.001 //
-  const HUE_RANGE = 0.2 // 1 would be full rainbow
-  const startHue = tick * HUE_SPEED
+const zoomTriangle = (fixture, tick, pos) => {
+  const HUE_SPEED = 0.015 //
+  const HUE_RANGE = 0.5 // 1 would be full rainbow
+  const POS_HUE_OFFSET = 1/6
+  const BRITE_SPEED = 0.005
+  const BRITE_RANGE = 0.2
+  const startHue = tick * HUE_SPEED + pos * POS_HUE_OFFSET
+  console.log(startHue)
   const endHue = startHue + HUE_RANGE
-  const hues = utils.spread(startHue, endHue, 7);
+  const hues = utils.spread(startHue, endHue, 3);
+
+  hues.forEach((hue, idx) => {
+    // const rgb = hslToRgb(hue, 0.8, 0.5)
+    // console.log('xo', hue, rgb, idx)
+    // // process.exit(0)
+    const rgb = hslToRgb(hue % 1, 0.8, 0.2)
+    leds = utils.getByRadius(idx);
+    leds.forEach(led => {
+      utils.setColor(fixture, led, rgb)
+    });
+  });
 }
 
 module.exports = {

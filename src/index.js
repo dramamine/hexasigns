@@ -1,7 +1,7 @@
 const config = require('./config')
 const {setColor, hexToRgb, getGradients, blackout} = require('./utils')
 const {hslToRgb} = require('./color-conversion')
-const {basicTriangle} = require('./triangle-patterns');
+const {basicTriangle, zoomTriangle} = require('./triangle-patterns');
 
 const activateFirstLights = () => {
   config.groups.all.forEach(fixture => {
@@ -54,8 +54,8 @@ const first_and_last_then_pretty = () => {
 
 const triangle_patterns = () => {
   ticks = ticks + 1
-  config.groups.all.forEach(fixture => {
-    basicTriangle(fixture, ticks)
+  config.groups.all.forEach((fixture, pos) => {
+    zoomTriangle(fixture, ticks, pos)
   });
 }
 
@@ -63,10 +63,16 @@ const triangle_patterns = () => {
 const start = Date.now()
 const loop = setInterval(triangle_patterns, 41)
 
-process.on('SIGINT', () => {
-  console.log('Do something useful here.')
+process.stdin.setRawMode(true);
+process.stdin.resume();
+
+const loopKiller = (config) => {
   clearInterval(loop)
   blackout(config, () => {
+    console.log('blackin out.');
     process.exit(0)
   })
-})
+}
+
+process.stdin.on('data', loopKiller.bind(process, config));
+process.on('SIGINT', loopKiller.bind(null, config));

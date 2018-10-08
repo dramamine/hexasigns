@@ -67,8 +67,6 @@ function hslToRgb(h, s, l) {
     b = hue2rgb(p, q, h - 1/3);
   }
 
-  console.log([r, g, b]);
-
   return [ r * 255, g * 255, b * 255 ];
 }
 

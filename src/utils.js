@@ -84,7 +84,7 @@ const byradius = [
   [15]
 ]
 const getByRadius = (row) => {
-  return byradius || []
+  return byradius[row] || []
 }
 
 // https://stackoverflow.com/questions/5623838/rgb-to-hex-and-hex-to-rgb
@@ -138,9 +138,15 @@ const getGradients = (colorA, colorB, len) => {
 
 // blackout - useful for killing process
 const blackout = (config, callback = () => {}) => {
-  config.groups.one.forEach(fixture => {
-    artnet.set(fixture.universe, 1, Array(50*3).fill(0), (err, res) => {
-      callback(res)
+  killCount = 0
+  const universes = [1,2,3]
+  universes.forEach(universe => {
+    artnet.set(universe, 1, Array(150*3).fill(0), (err, res) => {
+      if (killCount < universes.length-1) {
+        killCount++
+      } else {
+        callback(res)
+      }
     })
   });
 }
