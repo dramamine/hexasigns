@@ -43,7 +43,15 @@ const zoomTriangle = (fixture, tick, pos) => {
   });
 }
 
+const whiten = (fixture, tick) => {
+  const wav = tick % 40 // 0-39 position
+  const strength = 20 - Math.abs(20 - wav)
+  const rgb = strength
+  utils.setColor(fixture, 0, Array.from(Array(36*3), () => rgb))
+}
+
 module.exports = {
   basicTriangle,
-  zoomTriangle
+  zoomTriangle,
+  whiten
 }

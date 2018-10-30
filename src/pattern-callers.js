@@ -3,7 +3,7 @@ const fs = require('fs');
 const config = require('./config')
 const {setColor, hexToRgb, getGradients, blackout} = require('./utils')
 const {hslToRgb} = require('./color-conversion')
-const {basicTriangle, zoomTriangle} = require('./triangle-patterns');
+const {basicTriangle, zoomTriangle, whiten} = require('./triangle-patterns');
 
 const activateFirstLights = () => {
   config.groups.all.forEach(fixture => {
@@ -44,8 +44,16 @@ const triangle_patterns = () => {
   });
 }
 
+const rotating_triangles = () => {
+  ticks = ticks + 1
+  triangle_to_use = Math.floor((ticks / 40)) % config.groups.all.length
+  whiten(
+    config.groups.all[triangle_to_use],
+    ticks
+  )
+}
+
 const exit = () => {
-  // clearInterval(loop)
   blackout(config, () => {
     console.log('blackin out.');
     process.exit(0)
@@ -55,5 +63,6 @@ const exit = () => {
 module.exports = {
   triangle_patterns,
   first_and_last_then_pretty,
+  rotating_triangles,
   exit
 }

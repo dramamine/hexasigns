@@ -2,6 +2,7 @@ const inquirer = require('inquirer');
 const fs = require('fs');
 const config = require('./config')
 
+const {blackout} = require('./utils')
 const patternCallers = require('./pattern-callers');
 
 
@@ -29,7 +30,8 @@ const askQuestions = () => {
       return updateBpm()
     }
     if (patternCallers[answers.pattern]) {
-      setInterval(patternCallers[answers.pattern], 1000/framerate)
+      loop = null
+      loop = setInterval(patternCallers[answers.pattern], 1000/framerate)
     }
     askQuestions()
   });
@@ -53,6 +55,8 @@ updateBpm = () => {
   })
 }
 
+blackout()
+loop = setInterval(patternCallers.rotating_triangles, 1000/framerate)
 askQuestions()
 
 // process.stdin.setRawMode(true);
@@ -60,4 +64,7 @@ askQuestions()
 
 
 // process.stdin.on('data', loopKiller.bind(process, config));
-process.on('SIGINT', patternCallers.exit)
+process.on('SIGINT', () => {
+  clearInterval(loop)
+  patternCallers.exit()
+})
