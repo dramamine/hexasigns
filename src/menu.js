@@ -19,7 +19,7 @@ const questions = [
 
 const start = Date.now()
 let loop // = setInterval(triangle_patterns, 41)
-let framerate = 25
+let framerate = 24
 
 let updateBpm
 
@@ -56,7 +56,7 @@ updateBpm = () => {
 }
 
 blackout()
-loop = setInterval(patternCallers.rotating_triangles, 1000/framerate)
+// loop = setInterval(patternCallers.lines_out, 1000/framerate)
 askQuestions()
 
 // process.stdin.setRawMode(true);

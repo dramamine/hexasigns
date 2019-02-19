@@ -61,7 +61,7 @@ const triangle_patterns = () => {
 
 
 const start = Date.now()
-const loop = setInterval(triangle_patterns, 41)
+const loop = setInterval(triangle_patterns, 61)
 
 process.stdin.setRawMode(true);
 process.stdin.resume();

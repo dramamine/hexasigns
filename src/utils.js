@@ -92,6 +92,19 @@ const getByRow = (row) => {
   return byrow[row] || []
 }
 
+const byhexradius = [
+  [0],
+  [1,14],
+  [2,13,15],
+  [3,12,16,25],
+  [4,11,17,24,26],
+  [5,10,18,23,27,32],
+  [6,9,19,22,28,31,33],
+  [7,8,20,21,29,30,34,35]
+]
+
+// const getByHexRadius = 
+
 
 const byradius = [
   [0,1,2,3,4,5,6,7,8,20,21,29,30,34,35,33,32,26,25,15,14],
@@ -174,6 +187,8 @@ module.exports = {
   getGradients,
   blackout,
   getByRadius,
+  byrow,
   getByRow,
+  byhexradius,
   spread
 }

@@ -3,48 +3,51 @@ const fs = require('fs');
 const config = require('./config')
 const {setColor, hexToRgb, getGradients, blackout} = require('./utils')
 const {hslToRgb} = require('./color-conversion')
-const {basicTriangle, zoomTriangle, whiten} = require('./triangle-patterns');
+const {basicTriangle, zoomTriangle, whiten, whiteEach, blackEach, linesOut} = require('./triangle-patterns');
 
-const activateFirstLights = () => {
-  config.groups.all.forEach(fixture => {
-    setColor(fixture, 0, [200, 200, 200])
-  });
-}
-
-const activateLastLights = () => {
-  config.groups.all.forEach(fixture => {
-    setColor(fixture, 27, [200, 200, 200])
-  });
-}
-
+// how many frames have passed?
 let ticks = 0
-const first_and_last_then_pretty = () => {
+
+const from_first_to_last = () => {
   ticks = ticks + 1
 
-  // prettify(ticks)
+  const ct96 = ticks % 96
 
-  if (ticks > 240) {
-    return prettify(ticks)
-  }
-
-  if (ticks % 24 !== 0) return
-  if (Math.floor(ticks/24) % 2 == 0) {
+  // if (ticks % 24 !== 0) return
+  if (ct96 == 74) {
     blackout(config)
-  } else if (Math.floor(ticks/24) % 4 == 1) {
-    activateFirstLights()
-  } else if (Math.floor(ticks/24) % 4 == 3) {
-    activateLastLights()
+  } else if (ct96 == 1) {
+    whiteEach(config, 0)
+  } else if (ct96 == 62) {
+    whiteEach(config, 35)
+  } else if (ct96 >= 25 && ct96 <= 61) {
+    const offset = ct96 - 25
+    blackEach(config, offset)
+    whiteEach(config, offset+1)
   }
 }
 
-const triangle_patterns = () => {
+const lines_out = () => {
+  ticks = ticks + 1
+  linesOut(config, ticks)
+}
+
+const zoom_triangles_huespread = () => {
   ticks = ticks + 1
   config.groups.all.forEach((fixture, pos) => {
     zoomTriangle(fixture, ticks, pos)
   });
 }
 
-const rotating_triangles = () => {
+
+const zoom_triangles_nospread = () => {
+  ticks = ticks + 1
+  config.groups.all.forEach((fixture, pos) => {
+    zoomTriangle(fixture, ticks, pos, false)
+  });
+}
+
+const rotate_triangles = () => {
   ticks = ticks + 1
   triangle_to_use = Math.floor((ticks / 40)) % config.groups.all.length
   whiten(
@@ -61,8 +64,10 @@ const exit = () => {
 }
 
 module.exports = {
-  triangle_patterns,
-  first_and_last_then_pretty,
-  rotating_triangles,
+  from_first_to_last,
+  zoom_triangles_huespread,
+  zoom_triangles_nospread,
+  rotate_triangles,
+  lines_out,
   exit
 }

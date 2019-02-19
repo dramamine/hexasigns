@@ -20,16 +20,17 @@ const basicTriangle = (fixture, tick) => {
   });
 }
 
-const zoomTriangle = (fixture, tick, pos) => {
-  const HUE_SPEED = 0.015 //
-  const HUE_RANGE = 0.5 // 1 would be full rainbow
-  const POS_HUE_OFFSET = 1/6
+const zoomTriangle = (fixture, tick, pos, spread=true) => {
+  const HUE_SPEED = 0.009
+  // 0.5 is full rainbow
+  const HUE_RANGE = 0.5
+  const POS_HUE_OFFSET = spread ? 1/6 : 0
   const BRITE_SPEED = 0.005
   const BRITE_RANGE = 0.2
   const startHue = tick * HUE_SPEED + pos * POS_HUE_OFFSET
-  console.log(startHue)
+  
   const endHue = startHue + HUE_RANGE
-  const hues = utils.spread(startHue, endHue, 3);
+  const hues = utils.spread(startHue, endHue, 3)
 
   hues.forEach((hue, idx) => {
     // const rgb = hslToRgb(hue, 0.8, 0.5)
@@ -43,6 +44,29 @@ const zoomTriangle = (fixture, tick, pos) => {
   });
 }
 
+// lines coming out from the center
+const linesOut = (config, tick) => {
+  const ct = tick % 24
+  // ct is the brightest frame
+  const DIM = 0.12
+
+  const hue = (Math.floor(tick/24) * 0.1) % 1
+
+
+  utils.byhexradius.forEach((row, idx) => {
+    const brightness = (idx <= ct) 
+      ? Math.max(0, 0.6 - DIM * (ct - idx))
+      : 0;
+    console.log('using brightness', brightness, ct, idx)
+    const rgb = hslToRgb(hue, 0.6, brightness)
+    row.forEach(led => {
+      config.groups.all.forEach(fixture => {
+        utils.setColor(fixture, led, rgb)
+      })
+    })
+  })
+}
+
 const whiten = (fixture, tick) => {
   const wav = tick % 40 // 0-39 position
   const strength = 20 - Math.abs(20 - wav)
@@ -50,8 +74,25 @@ const whiten = (fixture, tick) => {
   utils.setColor(fixture, 0, Array.from(Array(36*3), () => rgb))
 }
 
+const whiteEach = (config, pos) => {
+  config.groups.all.forEach(fixture => {
+    utils.setColor(fixture, pos, [200, 200, 200])
+  })
+}
+
+// activate the last light in the line
+const blackEach = (config, pos) => {
+  config.groups.all.forEach(fixture => {
+    utils.setColor(fixture, pos, [0, 0, 0])
+  })
+}
+
+
 module.exports = {
   basicTriangle,
   zoomTriangle,
-  whiten
+  whiten,
+  whiteEach,
+  blackEach,
+  linesOut
 }
