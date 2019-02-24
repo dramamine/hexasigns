@@ -57,13 +57,40 @@ const linesOut = (config, tick) => {
     const brightness = (idx <= ct) 
       ? Math.max(0, 0.6 - DIM * (ct - idx))
       : 0;
-    console.log('using brightness', brightness, ct, idx)
     const rgb = hslToRgb(hue, 0.6, brightness)
     row.forEach(led => {
       config.groups.all.forEach(fixture => {
         utils.setColor(fixture, led, rgb)
       })
     })
+  })
+}
+
+const triforce = (fixture, tick, oddTriangle = false) => {
+  const animation = (Math.floor(tick / 48) + (oddTriangle ? 1 : 0)) % 4
+  console.log('using anim frame:', animation)
+ //  const frame = tick + (oddTriangle ? 96 : 0)
+  const outline = (animation <= 1)
+  // these will be either the outline, or the inner content
+  const leds = utils.getTriforce(outline)
+  let color
+  const briteFrames = (animation % 2 === 0)
+    ? tick % 48
+    : 48 - (tick % 48)
+  let brightness = 0.012 * briteFrames
+  if (brightness < 0.025) {
+    brightness = 0
+  }
+
+  if (animation <= 1 && outline) {
+
+    color = hslToRgb(0.6, 0.6, brightness)
+  } else if (animation >= 2 && !outline) {
+    color = hslToRgb(0.4, 0.6, brightness)
+  }
+
+  leds.forEach(led => {
+    utils.setColor(fixture, led, color)
   })
 }
 
@@ -94,5 +121,6 @@ module.exports = {
   whiten,
   whiteEach,
   blackEach,
-  linesOut
+  linesOut,
+  triforce
 }

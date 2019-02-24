@@ -3,13 +3,13 @@ const fs = require('fs');
 const config = require('./config')
 const {setColor, hexToRgb, getGradients, blackout} = require('./utils')
 const {hslToRgb} = require('./color-conversion')
-const {basicTriangle, zoomTriangle, whiten, whiteEach, blackEach, linesOut} = require('./triangle-patterns');
+const {basicTriangle, zoomTriangle, whiten, whiteEach, blackEach, linesOut, triforce} = require('./triangle-patterns');
 
 // how many frames have passed?
 let ticks = 0
 
 const from_first_to_last = () => {
-  ticks = ticks + 1
+  ticks += 1
 
   const ct96 = ticks % 96
 
@@ -28,12 +28,12 @@ const from_first_to_last = () => {
 }
 
 const lines_out = () => {
-  ticks = ticks + 1
+  ticks += 1
   linesOut(config, ticks)
 }
 
 const zoom_triangles_huespread = () => {
-  ticks = ticks + 1
+  ticks += 1
   config.groups.all.forEach((fixture, pos) => {
     zoomTriangle(fixture, ticks, pos)
   });
@@ -41,19 +41,26 @@ const zoom_triangles_huespread = () => {
 
 
 const zoom_triangles_nospread = () => {
-  ticks = ticks + 1
+  ticks += 1
   config.groups.all.forEach((fixture, pos) => {
     zoomTriangle(fixture, ticks, pos, false)
   });
 }
 
 const rotate_triangles = () => {
-  ticks = ticks + 1
-  triangle_to_use = Math.floor((ticks / 40)) % config.groups.all.length
+  ticks += 1
+  const triangle_to_use = Math.floor((ticks / 40)) % config.groups.all.length
   whiten(
     config.groups.all[triangle_to_use],
     ticks
   )
+}
+
+const triforcer = () => {
+  ticks += 1
+  config.groups.all.forEach((fixture, pos) => {
+    triforce(fixture, ticks, pos % 2 === 1)
+  });
 }
 
 const exit = () => {
@@ -64,6 +71,7 @@ const exit = () => {
 }
 
 module.exports = {
+  triforcer,
   from_first_to_last,
   zoom_triangles_huespread,
   zoom_triangles_nospread,

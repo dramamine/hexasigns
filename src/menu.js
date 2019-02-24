@@ -56,7 +56,7 @@ updateBpm = () => {
 }
 
 blackout()
-// loop = setInterval(patternCallers.lines_out, 1000/framerate)
+loop = setInterval(patternCallers.triforcer, 1000/framerate)
 askQuestions()
 
 // process.stdin.setRawMode(true);

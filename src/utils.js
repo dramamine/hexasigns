@@ -92,6 +92,7 @@ const getByRow = (row) => {
   return byrow[row] || []
 }
 
+// grouped by distance from the center of the hex
 const byhexradius = [
   [0],
   [1,14],
@@ -103,8 +104,6 @@ const byhexradius = [
   [7,8,20,21,29,30,34,35]
 ]
 
-// const getByHexRadius = 
-
 
 const byradius = [
   [0,1,2,3,4,5,6,7,8,20,21,29,30,34,35,33,32,26,25,15,14],
@@ -115,6 +114,16 @@ const getByRadius = (row) => {
   return byradius[row] || []
 }
 
+const getTriforce = (outline = false) => {
+  if (outline) {
+    return [0, 14, 15, 25, 26, 32, 33, 35, 16, 27, 12, 28, 3, 11, 18, 22, 29,4,21,5,20,6,8,7, 1, 2, 30, 34];
+  }
+  return [13,16,12,
+    27,28,31,
+    10,19,9];
+}
+
+// convert hex value to rgb, ex. 0000FF => [0, 0, 255]
 // https://stackoverflow.com/questions/5623838/rgb-to-hex-and-hex-to-rgb
 const hexToRgb = (hex) => {
     // Expand shorthand form (e.g. "03F") to full form (e.g. "0033FF")
@@ -131,11 +140,12 @@ const hexToRgb = (hex) => {
     ] : null;
 }
 
+
 const spread = (start, end, len) => {
-  diff = end - start
+  const diff = end - start
   const result = []
-  for (let i=0; i<len; i++) {
-    result.push(start + (diff * i/len))
+  for (let i = 0; i < len; i++) {
+    result.push(start + (diff * i / len))
   }
   return result
 }
@@ -166,17 +176,17 @@ const getGradients = (colorA, colorB, len) => {
 
 // blackout - useful for killing process
 const blackout = (config, callback = () => {}) => {
-  killCount = 0
+  let killCount = 0
   const universes = [1,2,3]
-  universes.forEach(universe => {
-    artnet.set(universe, 1, Array(150*3).fill(0), (err, res) => {
-      if (killCount < universes.length-1) {
+  universes.forEach((universe) => {
+    artnet.set(universe, 1, Array(150 * 3).fill(0), (err, res) => {
+      if (killCount < universes.length - 1) {
         killCount++
       } else {
         callback(res)
       }
     })
-  });
+  })
 }
 
 
@@ -190,5 +200,6 @@ module.exports = {
   byrow,
   getByRow,
   byhexradius,
-  spread
+  spread,
+  getTriforce
 }
