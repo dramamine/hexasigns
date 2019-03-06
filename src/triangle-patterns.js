@@ -1,5 +1,6 @@
 const {hslToRgb} = require('./color-conversion')
 const utils = require('./utils')
+const {setColor} = require('./leds');
 
 
 const basicTriangle = (fixture, tick) => {
@@ -15,7 +16,7 @@ const basicTriangle = (fixture, tick) => {
     const rgb = hslToRgb(hue, 0.8, 0.5 + Math.sin(tick * BRITE_SPEED))
     leds = utils.getByRow(idx);
     leds.forEach(led => {
-      utils.setColor(fixture, led, rgb)
+      setColor(fixture, led, rgb)
     });
   });
 }
@@ -39,7 +40,7 @@ const zoomTriangle = (fixture, tick, pos, spread=true) => {
     const rgb = hslToRgb(hue % 1, 0.8, 0.2)
     leds = utils.getByRadius(idx);
     leds.forEach(led => {
-      utils.setColor(fixture, led, rgb)
+      setColor(fixture, led, rgb)
     });
   });
 }
@@ -50,7 +51,7 @@ const linesOut = (config, tick) => {
   // ct is the brightest frame
   const DIM = 0.12
 
-  const hue = (Math.floor(tick/24) * 0.1) % 1
+  const hue = (Math.floor(tick/24) * 0.05) % 1
 
 
   utils.byhexradius.forEach((row, idx) => {
@@ -60,7 +61,7 @@ const linesOut = (config, tick) => {
     const rgb = hslToRgb(hue, 0.6, brightness)
     row.forEach(led => {
       config.groups.all.forEach(fixture => {
-        utils.setColor(fixture, led, rgb)
+        setColor(fixture, led, rgb)
       })
     })
   })
@@ -90,7 +91,7 @@ const triforce = (fixture, tick, oddTriangle = false) => {
   }
 
   leds.forEach(led => {
-    utils.setColor(fixture, led, color)
+    setColor(fixture, led, color)
   })
 }
 
@@ -98,19 +99,19 @@ const whiten = (fixture, tick) => {
   const wav = tick % 40 // 0-39 position
   const strength = 20 - Math.abs(20 - wav)
   const rgb = strength
-  utils.setColor(fixture, 0, Array.from(Array(36*3), () => rgb))
+  setColor(fixture, 0, Array.from(Array(36*3), () => rgb))
 }
 
 const whiteEach = (config, pos) => {
   config.groups.all.forEach(fixture => {
-    utils.setColor(fixture, pos, [200, 200, 200])
+    setColor(fixture, pos, [200, 200, 200])
   })
 }
 
 // activate the last light in the line
 const blackEach = (config, pos) => {
   config.groups.all.forEach(fixture => {
-    utils.setColor(fixture, pos, [0, 0, 0])
+    setColor(fixture, pos, [0, 0, 0])
   })
 }
 

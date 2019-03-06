@@ -1,71 +1,6 @@
 const artnet = require('./artnet')
 
-// https://stackoverflow.com/questions/10865025/merge-flatten-an-array-of-arrays-in-javascript
-const flatten = (arr) => {
-  return arr.reduce(function (flat, toFlatten) {
-    return flat.concat(Array.isArray(toFlatten) ? flatten(toFlatten) : toFlatten);
-  }, []);
-}
-
-const setColor = (fixture, pos, ...colors) => {
-  // find the correct channel
-  const startPos = fixture.min_channel + 3 * pos
-  artnet.set(fixture.universe, startPos, flatten(colors))
-}
-
-let queuedColors = {}
-let colorQueueTimeout
-
-setColorTimeout = () => {
-  for (let [universe, colorArr] of queuedColors) {
-    artnet.set(universe, 0, colorArr)
-  }
-  // cleanup
-  queuedColors = {}
-  colorQueueTimeout = null
-}
-
-// queue up some color changes
-// @TODO: swap this out for setColor and hope it Just Works
-const setColorQueue = (fixture, pos, ...colors) => {
-  const {universe, min_channel} = fixture;
-  if (!queuedColors[universe]) {
-    queuedColors[universe] = new Array(510)
-  }
-
-  // find the correct channel
-  const startPos = min_channel + 3 * pos
-
-  // replace colors in our color array. overwrites things (hopefully just nulls)
-  const colorsArr = flatten(colors)
-  for (let i = 0; i < colorsArr; i++) {
-    queuedColors[universe][startPos + i] = colorsArr[i]
-  }
-
-  // set our timeout the first time through the loop
-  if (!colorQueueTimeout) {
-    setTimeout(setColorTimeout, 0)
-  }
-
-  // artnet.set(fixture.universe, startPos, flatten(colors))
-}
-
-
-
 /**
- *  old one:
- *
- *                7
- *               8 6
- *            20  9 5
- *          21 19 10 4
- *        29 22 18 11 3
- *      30 28 23 17 12 2
- *    34 31 27 24 16 13 1
- *  35 33 32 26 25 15 14 0
- *
- *  updating to this:
- *
  *         7
  *        6  8
  *       5  9 20
@@ -77,6 +12,21 @@ const setColorQueue = (fixture, pos, ...colors) => {
  *
  * Get LED positions by row
  */
+
+const byangle = [
+  [0, 14, 15, 25, 26, 32, 33, 35],
+  [31, 34],
+  [27, 30],
+  [28, 24],
+  [16, 23, 29],
+  [13, 17, 22],
+  [12, 18, 21],
+  [11, 19],
+  [10, 20],
+  [8, 9],
+  [0, 1, 2, 3, 4, 5, 6, 7, 8]
+]
+
 const byrow = [
   [0,14,15,25,26,32,33,35],
   [1,13,16,24,27,31,34],

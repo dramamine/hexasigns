@@ -1,6 +1,8 @@
 const LEDS_PER_STRING = 50
 const LEDS_USED_PER_STRING = 36
 
+// NOTE: if you add more universes, update leds.js too!
+
 const getTriangle = (universe, min_channel) => {
   return {
     min_channel,
