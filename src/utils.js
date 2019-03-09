@@ -27,6 +27,10 @@ const byangle = [
   [0, 1, 2, 3, 4, 5, 6, 7, 8]
 ]
 
+const getByAngle = (idx) => {
+  return byangle[idx]
+}
+
 const byrow = [
   [0,14,15,25,26,32,33,35],
   [1,13,16,24,27,31,34],
@@ -141,14 +145,14 @@ const blackout = (config, callback = () => {}) => {
 
 
 module.exports = {
-  setColor,
-  flatten,
   hexToRgb,
   getGradients,
   blackout,
   getByRadius,
   byrow,
   getByRow,
+  byangle,
+  getByAngle,
   byhexradius,
   spread,
   getTriforce

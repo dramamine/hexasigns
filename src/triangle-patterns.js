@@ -95,6 +95,56 @@ const triforce = (fixture, tick, oddTriangle = false) => {
   })
 }
 
+const clocker = (fixture, tick, pos) => {
+  const HUE_SPEED = 1/96
+  const HUE_RANGE = 0.5 // 1 would be full rainbow
+  const BRITE_SPEED = 0.005
+  const startHue = tick * HUE_SPEED + (pos>0 ? 0.5 : 0)
+  const endHue = startHue + HUE_RANGE
+
+  const hues = utils.spread(startHue, endHue, 11)
+  let leds
+  hues.forEach((hue, idx) => {
+    const rgb = hslToRgb(hue % 1, 0.8, 0.2) // 0.5 + Math.sin(tick * BRITE_SPEED))
+    leds = utils.getByAngle(idx);
+    leds.forEach(led => {
+      setColor(fixture, led, rgb)
+    });
+  });
+}
+
+const clocker2 = (fixture, tick, pos) => {
+  /*
+  pseudo-code:
+  use ticks to pick a frame
+  use cosine to get brightness (-1 to 1: make this lots of 0 to 1)
+  */
+  // from spreadsheet magic
+  const tickToBrightness = x => Math.max(0, 
+    // -1 + 2 * Math.cos((x % 24) / 3.855)
+    Math.cos((x % 24) / 3.855)
+  );
+
+  // let hue offset get crazier over time.
+  // offset 0.01 to 0.05 (*i so up to .55 different)
+  const HUE_OFFSET = 0.03 - 0.02 * Math.cos(tick / 628)
+  // console.log(HUE_OFFSET)
+
+  const HUE_SPEED = 1/(24*16)
+  const hue = tick * HUE_SPEED // + pos * HUE_OFFSET
+
+  for (let i=0; i<utils.byangle.length; i++) {
+    const frame = Math.floor(tick) + i + (pos > 0 ? 12 : 0)
+    const brightness = tickToBrightness(frame)
+    const rgb = hslToRgb((hue + (HUE_OFFSET*i)) % 1, brightness-0.2, brightness/3)
+    // console.log('using brightness:', tick+i, brightness)
+    utils.byangle[i].forEach(led => {
+      setColor(fixture, led, rgb)
+    })
+  }
+}
+
+
 const whiten = (fixture, tick) => {
   const wav = tick % 40 // 0-39 position
   const strength = 20 - Math.abs(20 - wav)
@@ -123,5 +173,7 @@ module.exports = {
   whiteEach,
   blackEach,
   linesOut,
-  triforce
+  triforce,
+  clocker,
+  clocker2
 }

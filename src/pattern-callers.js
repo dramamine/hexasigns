@@ -3,7 +3,7 @@ const fs = require('fs');
 const config = require('./config')
 const {setColor, hexToRgb, getGradients, blackout} = require('./utils')
 const {hslToRgb} = require('./color-conversion')
-const {basicTriangle, zoomTriangle, whiten, whiteEach, blackEach, linesOut, triforce} = require('./triangle-patterns');
+const {basicTriangle, zoomTriangle, whiten, whiteEach, blackEach, linesOut, triforce, clocker, clocker2} = require('./triangle-patterns');
 const leds = require('./leds')
 
 // how many frames have passed?
@@ -82,9 +82,21 @@ const triforcer = () => {
   });
 }
 
+const clockers = () => {
+  config.groups.all.forEach((fixture, pos) => {
+    clocker(fixture, ticks, pos % 2 === 1)
+  });
+}
+
+const clockers2 = () => {
+  config.groups.all.forEach((fixture, pos) => {
+    clocker2(fixture, ticks, pos % 2)
+  });
+}
+
 const exit = () => {
-  console.log('how did I do?: ', runtimes)
   blackout(config, () => {
+    console.log('how did I do?: ', runtimes)
     console.log('blackin out.')
     process.exit(0)
   })
@@ -97,5 +109,7 @@ module.exports = {
   zoom_triangles_nospread: pattern_wrapper(zoom_triangles_nospread),
   rotate_triangles: pattern_wrapper(rotate_triangles),
   lines_out: pattern_wrapper(lines_out),
+  clockers: pattern_wrapper(clockers),
+  clockers2: pattern_wrapper(clockers2),
   exit
 }
