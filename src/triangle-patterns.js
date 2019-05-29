@@ -176,6 +176,24 @@ const warpdrive = (fixture, tick, pos) => {
    })
 }
 
+const posToSection = [
+  [4, 5, 6],
+  [2, 3, 4],
+  [0, 1, 2],
+]
+const bladez = (fixture, tick, pos) => {
+  const posOffset = Math.floor((pos + tick/24) % 3)
+  for(let i=0; i<7; i++) {
+    const leds = utils.bydistance[i]
+    let rgb = [0,0,0]
+    if (posToSection[posOffset].includes(i)) {
+      const hue = (pos * 0.2 + tick/(48*8)) % 1
+      const brite = 0.5 + 0.075 * Math.sin(tick/24)
+      rgb = hslToRgb(hue, 0.6, brite)
+    }
+    leds.forEach(led => setColor(fixture, led, rgb))
+  }
+}
 
 const whiten = (fixture, tick) => {
   const wav = tick % 40 // 0-39 position
@@ -200,13 +218,14 @@ const blackEach = (config, pos) => {
 
 module.exports = {
   basicTriangle,
-  zoomTriangle,
-  whiten,
-  whiteEach,
   blackEach,
-  linesOut,
-  triforce,
+  bladez,
   clocker,
   clocker2,
-  warpdrive
+  linesOut,
+  triforce,
+  warpdrive,
+  whiteEach,
+  whiten,
+  zoomTriangle,
 }

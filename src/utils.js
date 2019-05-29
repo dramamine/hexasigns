@@ -13,6 +13,20 @@ const artnet = require('./artnet')
  * Get LED positions by row
  */
 
+
+bydistance = [
+  [7,8,20,21,29,30,34,35],
+  [6,9,19,22,28,31,33],
+  [5,10,18,23,27,32],
+  [4,11,17,24,26],
+  [3,12,16,25],
+  [2,13,15],
+  [1,14],
+  [0]
+]
+
+const getByDistance = idx => bydistance[idx]
+
 const byangle = [
   [0, 14, 15, 25, 26, 32, 33, 35],
   [31, 34],
@@ -27,9 +41,7 @@ const byangle = [
   [0, 1, 2, 3, 4, 5, 6, 7, 8]
 ]
 
-const getByAngle = (idx) => {
-  return byangle[idx]
-}
+const getByAngle = idx => byangle[idx]
 
 const byrow = [
   [0,14,15,25,26,32,33,35],
@@ -42,9 +54,8 @@ const byrow = [
   [7]
 ];
 
-const getByRow = (row) => {
-  return byrow[row] || []
-}
+const getByRow = idx => byrow[idx]
+
 
 // grouped by distance from the center of the hex
 const byhexradius = [
@@ -149,6 +160,8 @@ module.exports = {
   getGradients,
   blackout,
   getByRadius,
+  bydistance,
+  getByDistance,
   byrow,
   getByRow,
   byangle,

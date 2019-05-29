@@ -51,6 +51,12 @@ const from_first_to_last = () => {
   }
 }
 
+const bladez = () => {
+  console.log('bladez called');
+  config.groups.all.forEach((fixture, pos) => {
+    patterns.bladez(fixture, ticks, pos % 3)
+  });
+}
 const lines_out = () => {
   patterns.linesOut(config, ticks)
 }
@@ -109,14 +115,15 @@ const exit = () => {
 }
 
 module.exports = {
-  triforcer: pattern_wrapper(triforcer),
-  from_first_to_last: pattern_wrapper(from_first_to_last),
-  zoom_triangles_huespread: pattern_wrapper(zoom_triangles_huespread),
-  zoom_triangles_nospread: pattern_wrapper(zoom_triangles_nospread),
-  rotate_triangles: pattern_wrapper(rotate_triangles),
-  lines_out: pattern_wrapper(lines_out),
+  bladez: pattern_wrapper(bladez),
   clockers: pattern_wrapper(clockers),
   clockers2: pattern_wrapper(clockers2),
+  from_first_to_last: pattern_wrapper(from_first_to_last),
+  lines_out: pattern_wrapper(lines_out),
+  rotate_triangles: pattern_wrapper(rotate_triangles),
+  triforcer: pattern_wrapper(triforcer),
   warpdrive: pattern_wrapper(warpdrive),
+  zoom_triangles_huespread: pattern_wrapper(zoom_triangles_huespread),
+  zoom_triangles_nospread: pattern_wrapper(zoom_triangles_nospread),
   exit
 }

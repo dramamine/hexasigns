@@ -8,7 +8,7 @@ const patternCallers = require('./pattern-callers');
 
 // this should be null usually - if set to something, we will boot up
 // with that animation
-let activePattern = patternCallers.lines_out // = patternCallers.warpdrive
+let activePattern // = patternCallers.bladez // = patternCallers.warpdrive
 const DEFAULT_BPM = 140
 
 const questions = [
