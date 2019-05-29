@@ -8,7 +8,8 @@ const patternCallers = require('./pattern-callers');
 
 // this should be null usually - if set to something, we will boot up
 // with that animation
-let activePattern = patternCallers.clockers2
+let activePattern = patternCallers.lines_out // = patternCallers.warpdrive
+const DEFAULT_BPM = 140
 
 const questions = [
   {
@@ -93,13 +94,13 @@ server(updateBpm)
 // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ \\
 // main loop starts here
 blackout()
-framerate = bpmToMs(120)
+framerate = bpmToMs(DEFAULT_BPM)
 
 if (activePattern) {
   clearInterval(loop)
   loop = setInterval(activePattern, framerate)
 }
-// askQuestions()
+askQuestions()
 
 
 

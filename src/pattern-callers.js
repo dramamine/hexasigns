@@ -3,7 +3,7 @@ const fs = require('fs');
 const config = require('./config')
 const {setColor, hexToRgb, getGradients, blackout} = require('./utils')
 const {hslToRgb} = require('./color-conversion')
-const {basicTriangle, zoomTriangle, whiten, whiteEach, blackEach, linesOut, triforce, clocker, clocker2} = require('./triangle-patterns');
+const patterns = require('./triangle-patterns');
 const leds = require('./leds')
 
 // how many frames have passed?
@@ -52,25 +52,25 @@ const from_first_to_last = () => {
 }
 
 const lines_out = () => {
-  linesOut(config, ticks)
+  patterns.linesOut(config, ticks)
 }
 
 const zoom_triangles_huespread = () => {
   config.groups.all.forEach((fixture, pos) => {
-    zoomTriangle(fixture, ticks, pos)
+    patterns.zoomTriangle(fixture, ticks, pos)
   });
 }
 
 
 const zoom_triangles_nospread = () => {
   config.groups.all.forEach((fixture, pos) => {
-    zoomTriangle(fixture, ticks, pos, false)
+    patterns.zoomTriangle(fixture, ticks, pos, false)
   });
 }
 
 const rotate_triangles = () => {
   const triangle_to_use = Math.floor((ticks / 40)) % config.groups.all.length
-  whiten(
+  patterns.whiten(
     config.groups.all[triangle_to_use],
     ticks
   )
@@ -78,19 +78,25 @@ const rotate_triangles = () => {
 
 const triforcer = () => {
   config.groups.all.forEach((fixture, pos) => {
-    triforce(fixture, ticks, pos % 2 === 1)
+    patterns.triforce(fixture, ticks, pos % 2 === 1)
   });
 }
 
 const clockers = () => {
   config.groups.all.forEach((fixture, pos) => {
-    clocker(fixture, ticks, pos % 2 === 1)
+    patterns.clocker(fixture, ticks, pos % 2 === 1)
   });
 }
 
 const clockers2 = () => {
   config.groups.all.forEach((fixture, pos) => {
-    clocker2(fixture, ticks, pos % 2)
+    patterns.clocker2(fixture, ticks, pos % 2)
+  });
+}
+
+const warpdrive = () => {
+  config.groups.all.forEach((fixture, pos) => {
+    patterns.warpdrive(fixture, ticks, pos % 6)
   });
 }
 
@@ -111,5 +117,6 @@ module.exports = {
   lines_out: pattern_wrapper(lines_out),
   clockers: pattern_wrapper(clockers),
   clockers2: pattern_wrapper(clockers2),
+  warpdrive: pattern_wrapper(warpdrive),
   exit
 }

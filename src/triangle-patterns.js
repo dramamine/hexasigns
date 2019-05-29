@@ -47,12 +47,11 @@ const zoomTriangle = (fixture, tick, pos, spread=true) => {
 
 // lines coming out from the center
 const linesOut = (config, tick) => {
-  const ct = tick % 24
+  const ct = tick % 32
   // ct is the brightest frame
   const DIM = 0.12
 
   const hue = (Math.floor(tick/24) * 0.05) % 1
-
 
   utils.byhexradius.forEach((row, idx) => {
     const brightness = (idx <= ct) 
@@ -144,6 +143,39 @@ const clocker2 = (fixture, tick, pos) => {
   }
 }
 
+const warpdrive = (fixture, tick, pos) => {
+  const lineToHighlight = (Math.round(tick / 4) + (pos * 8)) % 24
+
+  let posToBeRed = (4 - Math.round((tick)/32)) % 6
+  if (posToBeRed < 0) posToBeRed += 6
+  // if (pos === 1) console.log(tick, posToBeRed)
+  // const base = Math.round(tick / (4*24)) % 2
+  // console.log(tick, base)
+  // const isPosTop = (Math.round(tick/(4*12)) + pos) % 6 <= 2 ? 1 : 0
+  // const isPosTop = pos <= 2 ? 1 : 0
+
+  // @TODO couple frames wrong on pos 0. 
+
+  const hue = pos >= posToBeRed-1 && pos <= posToBeRed+1
+    ? 0.5
+    : 0
+  // if (pos !== 1) return
+  // console.log(pos, base, selectedPos, diff)
+  // const posToAlt = Math.ceil(5 - (base+2)/4)
+  // const hue = posToAlt - pos <= 2 && posToAlt - pos >= 0
+  //   ? 0.5
+  //   : 0
+  // if (pos === 1) console.log(base, posToAlt, pos, hue)
+  let brightness, rgb
+   utils.byhexradius.map((leds, idx) => {
+    brightness = idx > lineToHighlight ||( idx + lineToHighlight) % 2 == 1
+      ? 0
+      : 0.1 * Math.max(0, 7 - lineToHighlight + idx)
+     rgb = hslToRgb(hue, 0.6, brightness/2)
+     leds.forEach(led => setColor(fixture, led, rgb))
+   })
+}
+
 
 const whiten = (fixture, tick) => {
   const wav = tick % 40 // 0-39 position
@@ -175,5 +207,6 @@ module.exports = {
   linesOut,
   triforce,
   clocker,
-  clocker2
+  clocker2,
+  warpdrive
 }
