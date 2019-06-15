@@ -199,7 +199,7 @@ const snakeOne = (fixture, tick, pos) => {
   const animFrame = tick + (pos ? 15 : 0) % 120
 
   const hue = (tick + (pos ? 300 : 0) % 500) / 500 
-
+  const leds = utils.getByRadius(pos % 2)
   leds.forEach((led, idx) => {
     const distance = (animFrame % 40) - idx
     let brite = 0
@@ -210,6 +210,42 @@ const snakeOne = (fixture, tick, pos) => {
     }
 
     setColor(fixture, led, rgb)
+  })
+}
+
+const snake2 = (fixture, tick, pos) => {
+  // this pattern gets fast - skip frames
+  if (tick % 2 == 1) return
+  tick = tick / 2
+  const reversePos = (6 - pos) % 6
+
+  const radii = [7, 5, 3]
+  const nonRadii = [6,4,2,1,0]
+  const snakeHue = (tick % 500) / 500
+  const bgHue = ((250 + tick) % 500) / 500
+  const bgRgb = hslToRgb(bgHue, 0.4, 0.08)
+  const bgtracksRgb = hslToRgb(bgHue, 0.4, 0.03)
+
+  radii.forEach(radius => {
+    const size = radius * 6
+    let brite
+    let leds = utils.byhexradius[radius]
+    utils.byhexradius[radius].forEach((led, idx) => {
+      const effectivePos = idx + reversePos * leds.length
+      const diff = (48 + tick - effectivePos) % (6 * leds.length)
+      // if (reversePos !== 5) return
+      brite = (diff >= 0 && diff < 5) 
+        ? 0.3 + diff * 0.08
+        : 0 
+      if (brite > 0) console.log(`${tick}: using brite ${brite} with diff ${diff} pos ${pos} rversePos ${reversePos} effectivePos ${effectivePos}`)
+      rgb = brite > 0
+        ? hslToRgb(snakeHue, brite, Math.max(brite - .3, 0))
+        : bgtracksRgb
+      setColor(fixture, led, rgb)
+    })
+  })
+  nonRadii.forEach(radius => {
+    utils.byhexradius[radius].forEach(led => setColor(fixture, led, bgRgb))
   })
 }
 
@@ -242,6 +278,7 @@ module.exports = {
   clocker2,
   linesOut,
   snakeOne,
+  snake2,
   triforce,
   warpdrive,
   whiteEach,

@@ -64,6 +64,12 @@ const snake_one = () => {
   })
 }
 
+const snake2 = () => {
+  config.groups.all.forEach((fixture, pos) => {
+    patterns.snake2(fixture, ticks, pos)
+  })
+}
+
 const zoom_triangles_huespread = () => {
   config.groups.all.forEach((fixture, pos) => {
     patterns.zoomTriangle(fixture, ticks, pos)
@@ -126,6 +132,7 @@ module.exports = {
   lines_out: pattern_wrapper(lines_out),
   rotate_triangles: pattern_wrapper(rotate_triangles),
   snake_one: pattern_wrapper(snake_one),
+  snake2: pattern_wrapper(snake2),
   triforcer: pattern_wrapper(triforcer),
   warpdrive: pattern_wrapper(warpdrive),
   zoom_triangles_huespread: pattern_wrapper(zoom_triangles_huespread),
