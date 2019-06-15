@@ -195,6 +195,24 @@ const bladez = (fixture, tick, pos) => {
   }
 }
 
+const snakeOne = (fixture, tick, pos) => {
+  const animFrame = tick + (pos ? 15 : 0) % 120
+
+  const hue = (tick + (pos ? 300 : 0) % 500) / 500 
+
+  leds.forEach((led, idx) => {
+    const distance = (animFrame % 40) - idx
+    let brite = 0
+    let rgb = [0, 0, 0]
+    if (distance >= 0 && distance < 10) {
+      brite = 0.8 - (0.07 * distance)
+      rgb = hslToRgb(hue, brite - 0.2, Math.max(brite - .3, 0))
+    }
+
+    setColor(fixture, led, rgb)
+  })
+}
+
 const whiten = (fixture, tick) => {
   const wav = tick % 40 // 0-39 position
   const strength = 20 - Math.abs(20 - wav)
@@ -223,6 +241,7 @@ module.exports = {
   clocker,
   clocker2,
   linesOut,
+  snakeOne,
   triforce,
   warpdrive,
   whiteEach,

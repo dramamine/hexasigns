@@ -8,7 +8,7 @@ const patternCallers = require('./pattern-callers');
 
 // this should be null usually - if set to something, we will boot up
 // with that animation
-let activePattern // = patternCallers.bladez // = patternCallers.warpdrive
+let activePattern = patternCallers.snake_one // = patternCallers.bladez // = patternCallers.warpdrive
 const DEFAULT_BPM = 140
 
 const questions = [
@@ -99,18 +99,21 @@ framerate = bpmToMs(DEFAULT_BPM)
 if (activePattern) {
   clearInterval(loop)
   loop = setInterval(activePattern, framerate)
+} else {
+  askQuestions()
 }
-askQuestions()
 
 
 
 // process.stdin.setRawMode(true);
 // process.stdin.resume();
 
+// process.removeAllListeners('SIGINT')
 
 // process.stdin.on('data', loopKiller.bind(process, config));
 process.on('SIGINT', () => {
   clearInterval(loop)
-  blackout()
   patternCallers.exit()
+  blackout()
+  process.exit()
 })

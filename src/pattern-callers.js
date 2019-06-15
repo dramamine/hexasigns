@@ -1,8 +1,6 @@
-const inquirer = require('inquirer');
-const fs = require('fs');
+
 const config = require('./config')
-const {setColor, hexToRgb, getGradients, blackout} = require('./utils')
-const {hslToRgb} = require('./color-conversion')
+const {blackout} = require('./utils')
 const patterns = require('./triangle-patterns');
 const leds = require('./leds')
 
@@ -52,13 +50,18 @@ const from_first_to_last = () => {
 }
 
 const bladez = () => {
-  console.log('bladez called');
   config.groups.all.forEach((fixture, pos) => {
     patterns.bladez(fixture, ticks, pos % 3)
-  });
+  })
 }
 const lines_out = () => {
   patterns.linesOut(config, ticks)
+}
+
+const snake_one = () => {
+  config.groups.all.forEach((fixture, pos) => {
+    patterns.snakeOne(fixture, ticks, pos % 2)
+  })
 }
 
 const zoom_triangles_huespread = () => {
@@ -107,6 +110,7 @@ const warpdrive = () => {
 }
 
 const exit = () => {
+  console.log('hello from exit.');
   blackout(config, () => {
     console.log('how did I do?: ', runtimes)
     console.log('blackin out.')
@@ -121,6 +125,7 @@ module.exports = {
   from_first_to_last: pattern_wrapper(from_first_to_last),
   lines_out: pattern_wrapper(lines_out),
   rotate_triangles: pattern_wrapper(rotate_triangles),
+  snake_one: pattern_wrapper(snake_one),
   triforcer: pattern_wrapper(triforcer),
   warpdrive: pattern_wrapper(warpdrive),
   zoom_triangles_huespread: pattern_wrapper(zoom_triangles_huespread),
