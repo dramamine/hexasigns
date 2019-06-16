@@ -4,6 +4,6 @@ var options = {
 }
  
 var artnet = require('artnet')(options);
-artnet.setHost('192.168.0.48');
+artnet.setHost('192.168.1.50');
 
 module.exports = artnet
