@@ -1,7 +1,7 @@
 const artnet = require('./artnet')
 
 // # of universes - remember to keep this updated!
-const UNIVERSES = 2
+const {universes} = require('./config')
 
 const queuedColors = []
 
@@ -14,7 +14,7 @@ const flatten = (arr) => {
 
 
 const begin = () => {
-  for (let i = 0; i < UNIVERSES; i++) {
+  for (let i = 0; i < universes; i++) {
     queuedColors[i] = new Array(510)
   }
 }

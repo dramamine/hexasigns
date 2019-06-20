@@ -39,13 +39,13 @@ const from_first_to_last = () => {
   if (ct96 == 74) {
     blackout(config)
   } else if (ct96 == 1) {
-    whiteEach(config, 0)
+    patterns.whiteEach(config, 0)
   } else if (ct96 == 62) {
-    whiteEach(config, 35)
+    patterns.whiteEach(config, 35)
   } else if (ct96 >= 25 && ct96 <= 61) {
     const offset = ct96 - 25
-    blackEach(config, offset)
-    whiteEach(config, offset+1)
+    patterns.blackEach(config, offset)
+    patterns.whiteEach(config, offset+1)
   }
 }
 

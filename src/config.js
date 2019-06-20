@@ -1,49 +1,54 @@
 const LEDS_PER_STRING = 50
 const LEDS_USED_PER_STRING = 36
 
-// NOTE: if you add more universes, update leds.js too!
-
-const getTriangle = (universe, min_channel) => {
-  return {
-    min_channel,
-    universe
-  }
-}
-
 // start at a position, plus, skip the skipped pixels
 const skipped_channels = (LEDS_PER_STRING - LEDS_USED_PER_STRING) * 3
-const triangles = {
-  TRIANGLE_1: getTriangle(1, 150 * 0 + 1 + skipped_channels),
-  TRIANGLE_2: getTriangle(1, 150 * 1 + 1 + skipped_channels),
-  TRIANGLE_3: getTriangle(1, 150 * 2 + 1 + skipped_channels),
-  TRIANGLE_4: getTriangle(2, 150 * 0 + 1 + skipped_channels),
-  TRIANGLE_5: getTriangle(2, 150 * 1 + 1 + skipped_channels),
-  TRIANGLE_6: getTriangle(2, 150 * 2 + 1 + skipped_channels)
+const triangles = []
+for (let i = 0; i < 12; i++) {
+  triangles.push({
+    universe: 1 + Math.floor(i/3), // first 3 are 1, next 3 are 2, etc.
+    min_channel: 150 * (i % 3) + 1 + skipped_channels
+  })
 }
 
 const config = {
+  universes: 4,
   groups: {
     all: [
-      triangles.TRIANGLE_1,
-      triangles.TRIANGLE_2,
-      triangles.TRIANGLE_3,
-      triangles.TRIANGLE_4,
-      triangles.TRIANGLE_5,
-      triangles.TRIANGLE_6
+      triangles[0],
+      triangles[1],
+      triangles[2],
+      triangles[3],
+      triangles[4],
+      triangles[5],
+      triangles[6],
+      triangles[7],
+      triangles[8],
+      triangles[9],
+      triangles[10],
+      triangles[11]
+    ],
+    left: [
+      triangles[0],
+      triangles[1],
+      triangles[2],
+      triangles[3],
+      triangles[4],
+      triangles[5]
     ],
     evens: [
-      triangles.TRIANGLE_2,
-      triangles.TRIANGLE_4,
-      triangles.TRIANGLE_6
+      triangles[1],
+      triangles[3],
+      triangles[5]
     ],
     odds: [
-      triangles.TRIANGLE_1,
-      triangles.TRIANGLE_3,
-      triangles.TRIANGLE_5
+      triangles[0],
+      triangles[2],
+      triangles[4]
     ],
 
     one: [
-      triangles.TRIANGLE_1
+      triangles[0]
     ],
 
   }

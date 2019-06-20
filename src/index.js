@@ -8,7 +8,13 @@ const patternCallers = require('./pattern-callers');
 
 // this should be null usually - if set to something, we will boot up
 // with that animation
-let activePattern = patternCallers.snake_one // = patternCallers.bladez // = patternCallers.warpdrive
+let activePattern // = patternCallers.bladez // = patternCallers.warpdrive
+
+// use demo timer, i.e. switch patterns on an interval
+const USE_TIMER = true
+// how long is that interval, in ms
+const DEMO_LENGTH = 15000
+
 const DEFAULT_BPM = 140
 
 const questions = [
@@ -59,6 +65,28 @@ const askQuestions = () => {
   });
 }
 
+let lastPattern = -1
+const nextPattern = () => {
+  const patterns = Object.keys(patternCallers)
+  console.log(patterns)
+  let idx
+  while (true) {
+    // -1 so 'exit' isn't included
+    idx = Math.floor(Math.random() * (patterns.length - 1))
+    if (idx !== lastPattern) break
+  }
+
+  console.log(idx, patterns[idx])
+  activePattern = patternCallers[patterns[idx]]
+  blackout()
+  clearInterval(loop)
+  loop = setInterval(activePattern, framerate)  
+}
+const timer = () => {
+  demoTimer = setInterval(nextPattern, DEMO_LENGTH)
+  nextPattern()
+}
+
 promptForBpm = () => {
   inquirer.prompt([{
     name: 'bpm',
@@ -99,6 +127,8 @@ framerate = bpmToMs(DEFAULT_BPM)
 if (activePattern) {
   clearInterval(loop)
   loop = setInterval(activePattern, framerate)
+} else if (USE_TIMER) {
+  timer()
 } else {
   askQuestions()
 }
