@@ -55,7 +55,9 @@ const bladez = () => {
   })
 }
 const lines_out = () => {
-  patterns.linesOut(config, ticks)
+  config.groups.all.forEach((fixture, pos) => {
+    patterns.linesOut(fixture, ticks, Math.floor(pos/6))
+  })
 }
 
 const snake_one = () => {
@@ -93,7 +95,7 @@ const rotate_triangles = () => {
 
 const triforcer = () => {
   config.groups.all.forEach((fixture, pos) => {
-    patterns.triforce(fixture, ticks, pos % 2 === 1)
+    patterns.triforce(fixture, ticks, pos % 2 === 1, Math.floor(pos/6))
   });
 }
 
@@ -128,9 +130,9 @@ module.exports = {
   bladez: pattern_wrapper(bladez),
   clockers: pattern_wrapper(clockers),
   clockers2: pattern_wrapper(clockers2),
-  from_first_to_last: pattern_wrapper(from_first_to_last),
+  // from_first_to_last: pattern_wrapper(from_first_to_last),
   lines_out: pattern_wrapper(lines_out),
-  rotate_triangles: pattern_wrapper(rotate_triangles),
+  // rotate_triangles: pattern_wrapper(rotate_triangles),
   snake_one: pattern_wrapper(snake_one),
   snake2: pattern_wrapper(snake2),
   triforcer: pattern_wrapper(triforcer),

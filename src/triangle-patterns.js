@@ -46,10 +46,11 @@ const zoomTriangle = (fixture, tick, pos, spread=true) => {
 }
 
 // lines coming out from the center
-const linesOut = (config, tick) => {
-  const ct = tick % 32
+const linesOut = (fixture, tick, side) => {
+  const ct = (32 * side + tick) % 64
   // ct is the brightest frame
   const DIM = 0.12
+
 
   const hue = (Math.floor(tick/24) * 0.05) % 1
 
@@ -59,16 +60,17 @@ const linesOut = (config, tick) => {
       : 0;
     const rgb = hslToRgb(hue, 0.6, brightness)
     row.forEach(led => {
-      config.groups.all.forEach(fixture => {
-        setColor(fixture, led, rgb)
-      })
+      setColor(fixture, led, rgb)
     })
   })
 }
 
-const triforce = (fixture, tick, oddTriangle = false) => {
-  const animation = (Math.floor(tick / 48) + (oddTriangle ? 1 : 0)) % 4
-  console.log('using anim frame:', animation)
+const triforce = (fixture, tick, oddTriangle = false, side) => {
+  const animation = (
+    Math.floor(tick / 48) + 
+    (oddTriangle ? 1 : 0) +
+    (side ? 2 : 0)
+    ) % 4
  //  const frame = tick + (oddTriangle ? 96 : 0)
   const outline = (animation <= 1)
   // these will be either the outline, or the inner content
@@ -104,7 +106,10 @@ const clocker = (fixture, tick, pos) => {
   const hues = utils.spread(startHue, endHue, 11)
   let leds
   hues.forEach((hue, idx) => {
-    const rgb = hslToRgb(hue % 1, 0.8, 0.2) // 0.5 + Math.sin(tick * BRITE_SPEED))
+    const rgb = hslToRgb(hue % 1, 
+      0.5 + 0.3 * Math.sin(tick * BRITE_SPEED),
+      0.3 + 0.15 * Math.cos(tick * BRITE_SPEED)
+      )
     leds = utils.getByAngle(idx);
     leds.forEach(led => {
       setColor(fixture, led, rgb)
@@ -112,18 +117,26 @@ const clocker = (fixture, tick, pos) => {
   });
 }
 
-const clocker2 = (fixture, tick, pos) => {
-  /*
-  pseudo-code:
-  use ticks to pick a frame
-  use cosine to get brightness (-1 to 1: make this lots of 0 to 1)
-  */
-  // from spreadsheet magic
-  const tickToBrightness = x => Math.max(0, 
-    // -1 + 2 * Math.cos((x % 24) / 3.855)
-    Math.cos((x % 24) / 3.855)
-  );
+// from spreadsheet magic
+const tickToBrightness = (tick, led) => {
+/*
+pseudo-code:
+use ticks to pick a frame
+use cosine to get brightness (-1 to 1: make this lots of 0 to 1)
+*/
 
+  // -1 + 2 * Math.cos((x % 24) / 3.855)
+  let val = Math.cos((tick % 24) / 3.855)
+  if ([0, 1, 14, 2, 13, 15].includes(led)) {
+    val = val - 0.3
+  } else if ([6, 7, 8, 9, 19, 20, 21, 22, 28, 29, 30, 31, 33, 34, 35].includes(led)) {
+    val = val + 0.3
+  }
+  // console.log(tick, led, val)
+  return Math.min( Math.max(0, val), 1)
+}
+
+const clocker2 = (fixture, tick, pos) => {
   // let hue offset get crazier over time.
   // offset 0.01 to 0.05 (*i so up to .55 different)
   const HUE_OFFSET = 0.03 - 0.02 * Math.cos(tick / 628)
@@ -134,17 +147,18 @@ const clocker2 = (fixture, tick, pos) => {
 
   for (let i=0; i<utils.byangle.length; i++) {
     const frame = Math.floor(tick) + i + (pos > 0 ? 12 : 0)
-    const brightness = tickToBrightness(frame)
-    const rgb = hslToRgb((hue + (HUE_OFFSET*i)) % 1, brightness-0.2, brightness/3)
-    // console.log('using brightness:', tick+i, brightness)
     utils.byangle[i].forEach(led => {
+      const brightness = tickToBrightness(frame, led)
+      const rgb = hslToRgb((hue + (HUE_OFFSET*i)) % 1, brightness-0.2, brightness/3)
+      // console.log('using brightness:', tick+i, brightness)
       setColor(fixture, led, rgb)
     })
   }
 }
 
 const warpdrive = (fixture, tick, pos) => {
-  const lineToHighlight = (Math.round(tick / 4) + (pos * 8)) % 24
+  const lineToHighlight = ( Math.round(tick / 4) + (pos * 8)) % 24
+  const HUE_SPEED = 0.005
 
   let posToBeRed = (4 - Math.round((tick)/32)) % 6
   if (posToBeRed < 0) posToBeRed += 6
@@ -156,9 +170,10 @@ const warpdrive = (fixture, tick, pos) => {
 
   // @TODO couple frames wrong on pos 0. 
 
-  const hue = pos >= posToBeRed-1 && pos <= posToBeRed+1
-    ? 0.5
-    : 0
+  const hueOffset = .25 * Math.cos(tick * HUE_SPEED)
+  const hue = (pos >= posToBeRed-1 && pos <= posToBeRed+1
+    ? .75
+    : .25) + hueOffset
   // if (pos !== 1) return
   // console.log(pos, base, selectedPos, diff)
   // const posToAlt = Math.ceil(5 - (base+2)/4)
@@ -177,13 +192,13 @@ const warpdrive = (fixture, tick, pos) => {
 }
 
 const posToSection = [
-  [4, 5, 6],
+  [4, 5, 6, 7],
   [2, 3, 4],
   [0, 1, 2],
 ]
 const bladez = (fixture, tick, pos) => {
   const posOffset = Math.floor((pos + tick/24) % 3)
-  for(let i=0; i<7; i++) {
+  for(let i=0; i<8; i++) {
     const leds = utils.bydistance[i]
     let rgb = [0,0,0]
     if (posToSection[posOffset].includes(i)) {
@@ -227,17 +242,17 @@ const snake2 = (fixture, tick, pos) => {
   const bgtracksRgb = hslToRgb(bgHue, 0.4, 0.03)
 
   radii.forEach(radius => {
-    const size = radius * 6
     let brite
     let leds = utils.byhexradius[radius]
     utils.byhexradius[radius].forEach((led, idx) => {
       const effectivePos = idx + reversePos * leds.length
+      // add 48 to account for edge cases
       const diff = (48 + tick - effectivePos) % (6 * leds.length)
       // if (reversePos !== 5) return
       brite = (diff >= 0 && diff < 5) 
         ? 0.3 + diff * 0.08
         : 0 
-      if (brite > 0) console.log(`${tick}: using brite ${brite} with diff ${diff} pos ${pos} rversePos ${reversePos} effectivePos ${effectivePos}`)
+      // if (brite > 0) console.log(`${tick}: using brite ${brite} with diff ${diff} pos ${pos} rversePos ${reversePos} effectivePos ${effectivePos}`)
       rgb = brite > 0
         ? hslToRgb(snakeHue, brite, Math.max(brite - .3, 0))
         : bgtracksRgb
