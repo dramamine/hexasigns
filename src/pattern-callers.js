@@ -54,9 +54,15 @@ const bladez = () => {
     patterns.bladez(fixture, ticks, pos % 3)
   })
 }
+
 const lines_out = () => {
   config.groups.all.forEach((fixture, pos) => {
     patterns.linesOut(fixture, ticks, Math.floor(pos/6))
+  })
+}
+const spines_out = () => {
+  config.groups.all.forEach((fixture, pos) => {
+    patterns.spinesOut(fixture, ticks, Math.floor(pos/6))
   })
 }
 
@@ -132,6 +138,7 @@ module.exports = {
   clockers2: pattern_wrapper(clockers2),
   // from_first_to_last: pattern_wrapper(from_first_to_last),
   lines_out: pattern_wrapper(lines_out),
+  spines_out: pattern_wrapper(spines_out),
   // rotate_triangles: pattern_wrapper(rotate_triangles),
   snake_one: pattern_wrapper(snake_one),
   snake2: pattern_wrapper(snake2),

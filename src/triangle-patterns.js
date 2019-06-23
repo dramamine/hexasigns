@@ -47,18 +47,40 @@ const zoomTriangle = (fixture, tick, pos, spread=true) => {
 
 // lines coming out from the center
 const linesOut = (fixture, tick, side) => {
-  const ct = (32 * side + tick) % 64
   // ct is the brightest frame
-  const DIM = 0.12
+  const rate = 32
+  const fade = 0.25
+  const ct = (rate / 2 * side + tick * fade) % rate
+  const DIM = 0.06
 
-
-  const hue = (Math.floor(tick/24) * 0.05) % 1
+  const hue = (Math.floor(tick / 24) * 0.05) % 1
 
   utils.byhexradius.forEach((row, idx) => {
-    const brightness = (idx <= ct) 
+    const brightness = (idx <= ct)
       ? Math.max(0, 0.6 - DIM * (ct - idx))
       : 0;
-    const rgb = hslToRgb(hue, 0.6, brightness)
+    const hueOffset = 0.1 * Math.cos(idx / 2)
+    const rgb = hslToRgb(hue + hueOffset, 0.6, brightness)
+    row.forEach(led => {
+      setColor(fixture, led, rgb)
+    })
+  })
+}
+
+// lines coming out from the center
+const spinesOut = (fixture, tick, side) => {
+  // ct is the brightest frame
+  const rate = 4
+  const fade = 1
+  const ct = (rate/2 * side + tick*fade) % rate
+  const DIM = 0.03
+
+  const hue = (.5*side + Math.floor(tick/rate) * 0.05) % 1
+
+  utils.byhexradius.forEach((row, idx) => {
+    const brightness = 0.7 - (0.07 * idx)
+    const hueOffset = 0.2 * Math.cos(idx/2)
+    const rgb = hslToRgb(hue + hueOffset, 0.5 + 0.2 * brightness, brightness)
     row.forEach(led => {
       setColor(fixture, led, rgb)
     })
@@ -292,6 +314,7 @@ module.exports = {
   clocker,
   clocker2,
   linesOut,
+  spinesOut,
   snakeOne,
   snake2,
   triforce,
