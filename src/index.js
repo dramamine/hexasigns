@@ -8,12 +8,11 @@ const patternCallers = require('./pattern-callers');
 
 // this should be null usually - if set to something, we will boot up
 // with that animation
-let activePattern // = patternCallers.bladez // = patternCallers.warpdrive
-
+let activePattern // = patternCallers.warpdrive
 // use demo timer, i.e. switch patterns on an interval
 const USE_TIMER = true
 // how long is that interval, in ms
-const DEMO_LENGTH = 15000
+const DEMO_LENGTH = 20000
 
 const DEFAULT_BPM = 140
 
@@ -76,7 +75,7 @@ const nextPattern = () => {
     if (idx !== lastPattern) break
   }
 
-  console.log(idx, patterns[idx])
+  console.log(patterns[idx])
   activePattern = patternCallers[patterns[idx]]
   blackout()
   clearInterval(loop)
