@@ -6,10 +6,22 @@ const skipped_channels = (LEDS_PER_STRING - LEDS_USED_PER_STRING) * 3
 const triangles = []
 for (let i = 0; i < 12; i++) {
   triangles.push({
-    universe: 1 + Math.floor(i/3), // first 3 are 1, next 3 are 2, etc.
+    universe: 1 + Math.floor(i / 3), // first 3 are 1, next 3 are 2, etc.
     min_channel: 150 * (i % 3) + 1 + skipped_channels
   })
 }
+
+// for (let starting_universe = 1; starting_universe < 5; starting_universe += 2) {
+//   for (let i = 0; i < 6; i++) {
+//     const center_offset = 150 * i + 1 + skipped_channels
+//     const universe = starting_universe + Math.floor(center_offset / 510)
+//     const min_channel = (150 * i  + 1 + skipped_channels) - (510 * (universe - 1))
+//     triangles.push({
+//       universe,
+//       min_channel
+//     })
+//   }
+// }
 
 const config = {
   universes: 4,
