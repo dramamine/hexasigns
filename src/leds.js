@@ -33,7 +33,20 @@ const setColor = (fixture, pos, ...colors) => {
 
 const end = () => {
   queuedColors.forEach((colorArr, universe) => {
-    artnet.set(universe+1, 0, colorArr)
+    if (universe % 2 == 0) {
+      // default case
+      artnet.set(universe + 1, 0, colorArr)
+    } else {
+      // special handling for universe 4! (and 2 now)
+      // uni 3: 0-449 normally
+      // uni 3: 450-511 = 60 extra pixels (colorArr 0-59)
+      // uni 4: 0-whatever = colorArr 62-511
+      const prevUni = colorArr.slice(0, 62)
+      const currUni = colorArr.slice(60)
+      artnet.set(universe, 450, prevUni)
+      artnet.set(universe + 1, 0, currUni)
+    }
+    
   })
 }
 
