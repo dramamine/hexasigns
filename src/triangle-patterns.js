@@ -88,6 +88,7 @@ const spinesOut = (fixture, tick, side) => {
 }
 
 const triforce = (fixture, tick, oddTriangle = false, side) => {
+  const HUE_SPEED = 1/1000
   const animation = (
     Math.floor(tick / 48) + 
     (oddTriangle ? 1 : 0) +
@@ -108,9 +109,9 @@ const triforce = (fixture, tick, oddTriangle = false, side) => {
 
   if (animation <= 1 && outline) {
 
-    color = hslToRgb(0.6, 0.6, brightness)
+    color = hslToRgb((0.6 + HUE_SPEED * tick) % 1, 0.6, brightness)
   } else if (animation >= 2 && !outline) {
-    color = hslToRgb(0.4, 0.6, brightness)
+    color = hslToRgb((0.2 + HUE_SPEED * tick) % 1, 0.6, brightness)
   }
 
   leds.forEach(led => {
@@ -129,8 +130,8 @@ const clocker = (fixture, tick, pos) => {
   let leds
   hues.forEach((hue, idx) => {
     const rgb = hslToRgb(hue % 1, 
-      0.5 + 0.3 * Math.sin(tick * BRITE_SPEED),
-      0.3 + 0.15 * Math.cos(tick * BRITE_SPEED)
+      0.55 + 0.20 * Math.sin(tick * 2*BRITE_SPEED),
+      0.45 + 0.10 * Math.cos(tick * BRITE_SPEED)
       )
     leds = utils.getByAngle(idx);
     leds.forEach(led => {
@@ -183,7 +184,7 @@ const warpdrive = (fixture, tick, pos) => {
   const HUE_SPEED = 0.005
 
   let posToBeRed = (4 - Math.round((tick)/32)) % 6
-  if (posToBeRed < 0) posToBeRed += 6
+  while (posToBeRed < 0) { posToBeRed += 6 }
   // if (pos === 1) console.log(tick, posToBeRed)
   // const base = Math.round(tick / (4*24)) % 2
   // console.log(tick, base)
@@ -219,31 +220,40 @@ const posToSection = [
   [0, 1, 2],
 ]
 const bladez = (fixture, tick, pos) => {
-  const posOffset = Math.floor((pos + tick/24) % 3)
+  const posOffset = Math.floor((pos + tick/18) % 3)
+
   for(let i=0; i<8; i++) {
     const leds = utils.bydistance[i]
     let rgb = [0,0,0]
     if (posToSection[posOffset].includes(i)) {
       const hue = (pos * 0.2 + tick/(48*8)) % 1
-      const brite = 0.5 + 0.075 * Math.sin(tick/24)
+      const brite = 0.35 + 0.2 * Math.sin(tick/18)
       rgb = hslToRgb(hue, 0.6, brite)
     }
     leds.forEach(led => setColor(fixture, led, rgb))
   }
 }
 
-const snakeOne = (fixture, tick, pos) => {
-  const animFrame = tick + (pos ? 15 : 0) % 120
+const scale = (val, min, max, newMin, newMax) => {
+  const valAsPct = (val - min) / (max - min)
+  const res = newMin + valAsPct * (newMax - newMin)
+  return res
+}
 
-  const hue = (tick + (pos ? 300 : 0) % 500) / 500 
+const snakeOne = (fixture, tick, pos) => {
+  const animFrame = tick/2 + (pos ? 15 : 0) % 120
+
+  let hue = (tick + (pos ? 300 : 0) % 500) / 500 
+  hue = scale(hue, 0, 1, 0.025, 0.05)
+  
   const leds = utils.getByRadius(pos % 2)
   leds.forEach((led, idx) => {
     const distance = (animFrame % 40) - idx
     let brite = 0
     let rgb = [0, 0, 0]
     if (distance >= 0 && distance < 10) {
-      brite = 0.8 - (0.07 * distance)
-      rgb = hslToRgb(hue, brite - 0.2, Math.max(brite - .3, 0))
+      brite = 0.7 - (0.07 * distance)
+      rgb = hslToRgb(hue, brite+.1, Math.max(brite - .5, 0.1))
     }
 
     setColor(fixture, led, rgb)
@@ -259,9 +269,10 @@ const snake2 = (fixture, tick, pos) => {
   const radii = [7, 5, 3]
   const nonRadii = [6,4,2,1,0]
   const snakeHue = (tick % 500) / 500
-  const bgHue = ((250 + tick) % 500) / 500
-  const bgRgb = hslToRgb(bgHue, 0.4, 0.08)
-  const bgtracksRgb = hslToRgb(bgHue, 0.4, 0.03)
+  let bgHue = ((250 + tick) % 500) / 500
+  bgHue = scale(bgHue, 0, 1, 0.025, 0.05)
+  const bgRgb = hslToRgb(bgHue, 0.6, 0.08)
+  const bgtracksRgb = hslToRgb(bgHue, 0.8, 0.03)
 
   radii.forEach(radius => {
     let brite

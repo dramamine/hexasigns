@@ -143,7 +143,7 @@ module.exports = {
   snake_one: pattern_wrapper(snake_one),
   snake2: pattern_wrapper(snake2),
   triforcer: pattern_wrapper(triforcer),
-  warpdrive: pattern_wrapper(warpdrive),
+  // warpdrive: pattern_wrapper(warpdrive),
   zoom_triangles_huespread: pattern_wrapper(zoom_triangles_huespread),
   zoom_triangles_nospread: pattern_wrapper(zoom_triangles_nospread),
   exit

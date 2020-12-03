@@ -24,3 +24,23 @@ Check in index.js and make sure everything looks cool. Code to activate these:
 - @TODO rotate between em
 - run `npm i`
 - run `npm start`
+
+## Raspberry Pi Setup Guide
+
+```bash
+# install/update node
+
+curl -sL https://deb.nodesource.com/setup_10.x | sudo bash -
+sudo apt-get install -y nodejs
+npm -v
+node -v
+cd /home/pi/led-magic/
+npm i
+
+# setup crontabs
+sudo crontab -e
+@reboot node /home/pi/led-magic/src/index.js
+
+# boot into CLI/GUI
+sudo raspi-config
+```
