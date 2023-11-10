@@ -18,7 +18,7 @@ const handleRuntime = (start) => {
   const runtime = Date.now() - start
   runtimes.max = Math.max(runtimes.max, runtime)
   runtimes.frames += 1
-  runtimes.avg = ((runtimes.frames-1 * runtimes.avg) + runtime) / runtimes.frames 
+  runtimes.avg = ((runtimes.frames-1 * runtimes.avg) + runtime) / runtimes.frames
 }
 
 const pattern_wrapper = (fn) => {
@@ -123,6 +123,13 @@ const warpdrive = () => {
   });
 }
 
+const redEach = () => {
+  console.log("hello from redEach");
+  config.groups.all.forEach((fixture, pos) => {
+    patterns.redEach(config, pos)
+  });
+}
+
 const exit = () => {
   console.log('hello from exit.');
   blackout(config, () => {
@@ -133,18 +140,19 @@ const exit = () => {
 }
 
 module.exports = {
+  zoom_triangles_huespread: pattern_wrapper(zoom_triangles_huespread),
   bladez: pattern_wrapper(bladez),
-  clockers: pattern_wrapper(clockers),
-  clockers2: pattern_wrapper(clockers2),
-  // from_first_to_last: pattern_wrapper(from_first_to_last),
   lines_out: pattern_wrapper(lines_out),
-  spines_out: pattern_wrapper(spines_out),
+  clockers: pattern_wrapper(clockers),
+  // from_first_to_last: pattern_wrapper(from_first_to_last),
   // rotate_triangles: pattern_wrapper(rotate_triangles),
   snake_one: pattern_wrapper(snake_one),
-  snake2: pattern_wrapper(snake2),
+  spines_out: pattern_wrapper(spines_out),
   triforcer: pattern_wrapper(triforcer),
+  snake2: pattern_wrapper(snake2),
   // warpdrive: pattern_wrapper(warpdrive),
-  zoom_triangles_huespread: pattern_wrapper(zoom_triangles_huespread),
   zoom_triangles_nospread: pattern_wrapper(zoom_triangles_nospread),
+  clockers2: pattern_wrapper(clockers2),
+  // redEach: pattern_wrapper(redEach),
   exit
 }

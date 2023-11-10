@@ -29,7 +29,7 @@ const zoomTriangle = (fixture, tick, pos, spread=true) => {
   const BRITE_SPEED = 0.005
   const BRITE_RANGE = 0.2
   const startHue = tick * HUE_SPEED + pos * POS_HUE_OFFSET
-  
+
   const endHue = startHue + HUE_RANGE
   const hues = utils.spread(startHue, endHue, 3)
 
@@ -90,7 +90,7 @@ const spinesOut = (fixture, tick, side) => {
 const triforce = (fixture, tick, oddTriangle = false, side) => {
   const HUE_SPEED = 1/1000
   const animation = (
-    Math.floor(tick / 48) + 
+    Math.floor(tick / 48) +
     (oddTriangle ? 1 : 0) +
     (side ? 2 : 0)
     ) % 4
@@ -129,7 +129,7 @@ const clocker = (fixture, tick, pos) => {
   const hues = utils.spread(startHue, endHue, 11)
   let leds
   hues.forEach((hue, idx) => {
-    const rgb = hslToRgb(hue % 1, 
+    const rgb = hslToRgb(hue % 1,
       0.55 + 0.20 * Math.sin(tick * 2*BRITE_SPEED),
       0.45 + 0.10 * Math.cos(tick * BRITE_SPEED)
       )
@@ -191,7 +191,7 @@ const warpdrive = (fixture, tick, pos) => {
   // const isPosTop = (Math.round(tick/(4*12)) + pos) % 6 <= 2 ? 1 : 0
   // const isPosTop = pos <= 2 ? 1 : 0
 
-  // @TODO couple frames wrong on pos 0. 
+  // @TODO couple frames wrong on pos 0.
 
   const hueOffset = .25 * Math.cos(tick * HUE_SPEED)
   const hue = (pos >= posToBeRed-1 && pos <= posToBeRed+1
@@ -243,9 +243,9 @@ const scale = (val, min, max, newMin, newMax) => {
 const snakeOne = (fixture, tick, pos) => {
   const animFrame = tick/2 + (pos ? 15 : 0) % 120
 
-  let hue = (tick + (pos ? 300 : 0) % 500) / 500 
+  let hue = (tick + (pos ? 300 : 0) % 500) / 500
   hue = scale(hue, 0, 1, 0.025, 0.05)
-  
+
   const leds = utils.getByRadius(pos % 2)
   leds.forEach((led, idx) => {
     const distance = (animFrame % 40) - idx
@@ -282,9 +282,9 @@ const snake2 = (fixture, tick, pos) => {
       // add 48 to account for edge cases
       const diff = (48 + tick - effectivePos) % (6 * leds.length)
       // if (reversePos !== 5) return
-      brite = (diff >= 0 && diff < 5) 
+      brite = (diff >= 0 && diff < 5)
         ? 0.3 + diff * 0.08
-        : 0 
+        : 0
       // if (brite > 0) console.log(`${tick}: using brite ${brite} with diff ${diff} pos ${pos} rversePos ${reversePos} effectivePos ${effectivePos}`)
       rgb = brite > 0
         ? hslToRgb(snakeHue, brite, Math.max(brite - .3, 0))
@@ -317,6 +317,14 @@ const blackEach = (config, pos) => {
   })
 }
 
+const redEach = (config, pos) => {
+  console.log(config.groups);
+  config.groups.all.forEach(fixture => {
+    setColor(fixture, pos, [200, 0, 0])
+  })
+}
+
+
 
 module.exports = {
   basicTriangle,
@@ -333,4 +341,5 @@ module.exports = {
   whiteEach,
   whiten,
   zoomTriangle,
+  redEach,
 }

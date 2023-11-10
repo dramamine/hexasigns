@@ -10,6 +10,7 @@ for (let i = 0; i < 12; i++) {
     min_channel: 150 * (i % 3) + 1 + skipped_channels
   })
 }
+console.log(triangles)
 
 // for (let starting_universe = 1; starting_universe < 5; starting_universe += 2) {
 //   for (let i = 0; i < 6; i++) {

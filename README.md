@@ -17,6 +17,16 @@ Draw custom patterns on LED signs.
 - NES-350-12 power supply, or equivalent
 http://puu.sh/DGCpj/a2908da07a.jpg
 
+## Updated Guide 2023
+
+- Record output via Lightjams (4 universes; starting universe is 1)
+- Output saved to hexasigns-4u-aligned-10-patterns.mp4
+- Convert to `output.bin` via `video2sdcard.py`
+- Use `videosdcard.ino` to play back file on Teensy
+- Data channels 0 and 1 serve the top & bottom half of the first hexagon
+- Data channels 2 and 3 serve the top & bottom half of the second hexagon
+
+
 ## How to Use
 Check in index.js and make sure everything looks cool. Code to activate these:
 - menu mode

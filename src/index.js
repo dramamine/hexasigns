@@ -8,11 +8,11 @@ const patternCallers = require('./pattern-callers');
 
 // this should be null usually - if set to something, we will boot up
 // with that animation
-let activePattern // = patternCallers.zoom_triangles_nospread
+let activePattern = patternCallers.redEach
 // use demo timer, i.e. switch patterns on an interval
 const USE_TIMER = true
 // how long is that interval, in ms
-const DEMO_LENGTH = 15000
+const DEMO_LENGTH = 20000
 
 const DEFAULT_BPM = 150
 
@@ -40,7 +40,7 @@ let promptForBpm
 const updateBpm = (bpm) => {
   framerate = bpmToMs(bpm)
   console.log('using framerate:', framerate)
-  
+
   if (activePattern) {
     clearInterval(loop)
     loop = setInterval(activePattern, framerate)
@@ -68,18 +68,14 @@ let lastPattern = -1
 const nextPattern = () => {
   const patterns = Object.keys(patternCallers)
   console.log(patterns)
-  let idx
-  while (true) {
-    // -1 so 'exit' isn't included
-    idx = Math.floor(Math.random() * (patterns.length - 1))
-    if (idx !== lastPattern) break
-  }
+  let idx = (lastPattern + 1) % (patterns.length - 1)
 
   console.log(patterns[idx])
   activePattern = patternCallers[patterns[idx]]
   blackout()
   clearInterval(loop)
-  loop = setInterval(activePattern, framerate)  
+  loop = setInterval(activePattern, framerate)
+  lastPattern = idx
 }
 const timer = () => {
   demoTimer = setInterval(nextPattern, DEMO_LENGTH)
