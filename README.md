@@ -3,6 +3,9 @@ Draw custom patterns on LED signs.
 
 https://metal-heart.org/hexasigns/
 
+## TODO
+clockers -> snake_one transition leaves some pixels highlighted
+
 
 ## Updated Guide 2023
 

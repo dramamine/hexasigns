@@ -1,22 +1,43 @@
 
 import cv2
 import math
-import os
 
-output_file_path  = "./output.bin"
+USE_GRB = False
 
-# make sure these match on the Teensy
-# i.e. LEDs per row
+output_file_path = "./output-170x4.bin"
+sequence_path = "./hexasigns-4u-aligned-10-patterns.mp4"
+
+# NOTE: make sure the teensy has these same values for width and height
+#
+# how many LEDs of data do we read from each video row?
+# this number is 170 maximum (510 bytes per row / 3 bytes per pixel)
 WIDTH = 170
 # i.e. number of outputs used by the Teensy
+# height says 6 but really it's 8 when we get to Teensyland since we're filling the 4th and 8th with zeroes
 HEIGHT = 4
-FPS = 30.0
+FPS = 40.0
+
 
 def to_array(rows):
   res = []
   for row in rows:
-    for col in row:
-      res.append(col[0])
+    for i in range(170):
+      # render in GRB oder
+      if (USE_GRB):
+          res.append([
+              row[3*i+1][0],
+              row[3*i][0],
+              row[3*i+2][0]
+          ])
+      else:
+          res.append([
+              row[3*i][0],
+              row[3*i+1][0],
+              row[3*i+2][0]
+          ])
+
+  # flatten the array
+  res = [item for sublist in res for item in sublist]
   return res
 
 
@@ -35,22 +56,21 @@ class SequencePlayer:
     self.framecount = 0
     self.ended = False
 
-    assert HEIGHT * 512 > WIDTH * 3, f"For width {WIDTH} you'll need {math.ceil(WIDTH*3 / 512)} universes or greater per output row"
+    assert HEIGHT * 512 > WIDTH * \
+        3, f"For width {WIDTH} you'll need {math.ceil(WIDTH*3 / 512)} universes or greater per output row"
 
     self.width = int(self.vid.get(cv2.CAP_PROP_FRAME_WIDTH))
-    assert self.width == 512
+    assert self.width == 512, f"Video has wrong width {self.width} (expecting 512)"
 
     self.height = int(self.vid.get(cv2.CAP_PROP_FRAME_HEIGHT))
     assert self.height % HEIGHT == 0, f"Video has wrong height {self.height} for specified # of outputs {HEIGHT}"
 
-    self.rows_per_row = int(self.height / HEIGHT)
-    print("rows per row: {}".format(self.rows_per_row))
-
-
+    self.video_rows_per_led_row = int(self.height / HEIGHT)
+    print("video rows per led row:", self.video_rows_per_led_row)
 
     frames = int(self.vid.get(cv2.CAP_PROP_FRAME_COUNT))
     print("starting sequence: frames={} ({}m{}s)".format(
-      frames, math.floor(frames/(FPS*60)), math.floor(frames/FPS) % 60
+        frames, math.floor(frames/(FPS*60)), math.floor(frames/FPS) % 60
     ))
 
   def read_frame(self):
@@ -65,7 +85,7 @@ class SequencePlayer:
       print("need 2 play a video before reading frames")
       return None
 
-    ret,frame = self.vid.read()
+    ret, frame = self.vid.read()
 
     if ret:
       self.framecount += 1
@@ -76,17 +96,15 @@ class SequencePlayer:
       if (self.loop):
         self.play(self.path)
         return self.read_frame()
-      # print("that was all the frames. end of song probably? framecount={}".format(self.framecount))
       self.ended = True
       return None
+
 
 class Video2SDCard:
   def __init__(self, output_file):
     self.output_file = output_file
     self.sp = SequencePlayer()
-    sequencePath = os.path.join('{}.mp4'.format("hexasigns-4u-aligned-10-patterns"))
-    # sequencePath = os.path.join('embedded', '{}.mp4'.format("red-green-wipe-veryslow-30s"))
-    self.sp.play(sequencePath)
+    self.sp.play(sequence_path)
     print(self.sp.width)
     print(self.sp.height)
 
@@ -106,18 +124,24 @@ class Video2SDCard:
     bytes = bytearray([126, 126, 126, 126, 126])
     self.output_file.write(bytes)
 
-
   def write_frame(self, frame):
     for i in range(HEIGHT):
-      start = 2 * i
-      end = start + self.sp.rows_per_row
+      start = self.sp.video_rows_per_led_row * i
+      end = start + self.sp.video_rows_per_led_row
       rows = frame[start:end]
-      row_array = to_array(rows)[0:WIDTH*3]
-      data = bytearray( row_array )
+
+      row_array = to_array(rows)
+      data = bytearray(row_array)
+
+      # this can happen if you have the wrong value for video_rows_per_led_row or
+      # try to read from a row that doesn't exist
+      assert len(data) == WIDTH * \
+          3, f"Wrong number of bytes in row {i}: {len(data)}"
+
       self.output_file.write(data)
 
   def write_frames(self):
-    while(True):
+    while (True):
       frame = self.sp.read_frame()
       if frame is None:
         break
