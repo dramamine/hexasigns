@@ -80,9 +80,9 @@ https://github.com/PaulStoffregen/OctoWS2811/tree/master/extras
 #include <Wire.h>
 
 #define LED_WIDTH    170   // number of LEDs horizontally
-#define LED_HEIGHT   4   // number of LEDs vertically (must be multiple of 8)
+#define LED_HEIGHT   8   // number of LEDs vertically (must be multiple of 8)
 
-#define FILENAME     "output-170x4.bin"
+#define FILENAME     "output.bin"
 
 const int ledsPerStrip = LED_WIDTH * LED_HEIGHT / 8;
 DMAMEM int displayMemory[ledsPerStrip*6];

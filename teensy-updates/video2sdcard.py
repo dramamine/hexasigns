@@ -2,10 +2,10 @@
 import cv2
 import math
 
-USE_GRB = False
+USE_GRB = True
 
-output_file_path = "./output-170x4.bin"
-sequence_path = "./hexasigns-4u-aligned-10-patterns.mp4"
+output_file_path = "./output.bin"
+sequence_path = "./hexasigns-8u.mp4"
 
 # NOTE: make sure the teensy has these same values for width and height
 #
@@ -14,7 +14,7 @@ sequence_path = "./hexasigns-4u-aligned-10-patterns.mp4"
 WIDTH = 170
 # i.e. number of outputs used by the Teensy
 # height says 6 but really it's 8 when we get to Teensyland since we're filling the 4th and 8th with zeroes
-HEIGHT = 4
+HEIGHT = 8
 FPS = 40.0
 
 

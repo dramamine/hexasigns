@@ -317,10 +317,9 @@ const blackEach = (config, pos) => {
   })
 }
 
-const redEach = (config, pos) => {
-  console.log(config.groups);
+const redEach = (config, tick) => {
   config.groups.all.forEach(fixture => {
-    setColor(fixture, pos, [200, 0, 0])
+    setColor(fixture, 0, Array.from(Array(12 * 3), () => [200 + tick, 0, 0]))
   })
 }
 
